@@ -1,0 +1,175 @@
+<html>
+
+<head>
+    <title>
+        Date Operations HTML JS
+    </title>
+</head>
+
+<body>
+    <h1>Date Operations</h1>
+    <!-- Current Date Button -->
+    <button onclick="currentDate()">Current Date</button>
+    <p id="currentDate"></p>
+
+    <!-- Date Input Field -->
+    <label for="dateInput">Select a date:</label>
+    <input type="date" id="dateInput">
+    <button onclick="displayDate()">Submit</button>
+    <p id="displayDate"></p>
+
+    <!-- Date Comparison Result -->
+    <p id="dateComparison"></p>
+
+
+    <label for="numDays">Enter number of days:</label>
+    <input type="number" id="numDays">
+
+    <!-- Past and Future Buttons -->
+    <button onclick="calculateDate('past')">Past</button>
+    <button onclick="calculateDate('future')">Future</button>
+
+    <!-- Calculated Date Result -->
+    <p id="calculatedDate"></p>
+
+    <!-- Date Input Fields for Date Comparison -->
+    <label for="startDate">Select start date:</label>
+    <input type="date" id="startDate">
+
+    <label for="endDate">Select end date:</label>
+    <input type="date" id="endDate">
+
+    <button onclick="displayDateComparison()">Submit</button>
+    <p id="dateInterval"></p>
+
+    <!--Date Format Conversion-->
+    <label for="dateInputConversion">Select a date:</label>
+    <input type="date" id="dateInputConversion">
+
+    <!-- Date Format Input -->
+    <label for="dateFormat">Select date format:</label>
+    <select id="dateFormat">
+        <option value="DD/MM/YYYY">DD/MM/YYYY</option>
+        <option value="DD-MM-YYYY">DD-MM-YYYY</option>
+        <option value="DD-MMM-YYYY">DD-MMM-YYYY</option>
+        <option value="DD/MMM/YYYY">DD/MMM/YYYY</option>
+        <option value="DD-MM-YY">DD-MM-YY</option>
+        <option value="DD/MM/YY">DD/MM/YY</option>
+        <option value="MM/DD/YYYY">MM/DD/YYYY</option>
+        <option value="MM-DD-YYYY">MM-DD-YYYY</option>
+        <option value="MMM-DD-YYYY">MMM-DD-YYYY</option>
+        <option value="MMM/DD/YYYY">MMM/DD/YYYY</option>
+        <option value="MM-DD-YY">MM-DD-YY</option>
+        <option value="MM/DD/YY">MM/DD/YY</option>
+    </select>
+
+    <button onclick="displayDateFormat()">Display Date</button>
+    <p id="displayDateFormat"></p>
+
+
+    <script>
+        function currentDate() {
+            var currentDate = new Date();
+            document.getElementById("currentDate").innerText = currentDate.toDateString();
+        }
+
+        function displayDate() {
+            var selectedDate = new Date(document.getElementById("dateInput").value);
+            var currentDate = new Date();
+            var dateComparison = compareDates(selectedDate, currentDate);
+            document.getElementById("dateComparison").innerText = dateComparison;
+        }
+
+        function compareDates(selectedDate, currentDate) {
+            var dateComparison = "";
+            var timeDiff = selectedDate.getTime() - currentDate.getTime();
+            if (timeDiff > 0) {
+                // Future Date
+                var years = Math.floor(timeDiff / (1000 * 60 * 60 * 24 * 365.25));
+                var months = Math.floor((timeDiff % (1000 * 60 * 60 * 24 * 365.25)) / (1000 * 60 * 60 * 24 * 30.44));
+                var days = Math.floor((timeDiff % (1000 * 60 * 60 * 24 * 30.44)) / (1000 * 60 * 60 * 24));
+
+                dateComparison = `Selected Date is in the future.\n${years} years, ${months} months, and ${days} days remaining.`;
+            } else {
+                // Past Date
+                timeDiff = Math.abs(timeDiff);
+                var years = Math.floor(timeDiff / (1000 * 60 * 60 * 24 * 365.25));
+                var months = Math.floor((timeDiff % (1000 * 60 * 60 * 24 * 365.25)) / (1000 * 60 * 60 * 24 * 30.44));
+                var days = Math.floor((timeDiff % (1000 * 60 * 60 * 24 * 30.44)) / (1000 * 60 * 60 * 24));
+                dateComparison = `Selected Date is in the past.\n${years} years, ${months} months, and ${days} days have passed.`;
+            }
+            return dateComparison;
+        }
+
+        function calculateDate(type) {
+            var numDays = parseInt(document.getElementById("numDays").value);
+            var currentDate = new Date();
+
+            if (type === 'past') {
+                currentDate.setDate(currentDate.getDate() - numDays);
+            } else if (type === 'future') {
+                currentDate.setDate(currentDate.getDate() + numDays);
+            }
+
+            document.getElementById("calculatedDate").innerText = currentDate.toDateString();
+        }
+
+        function displayDateComparison() {
+            var startDate = new Date(document.getElementById("startDate").value);
+            var endDate = new Date(document.getElementById("endDate").value);
+            var timeDiff = endDate.getTime() - startDate.getTime();
+            var years = Math.floor(timeDiff / (1000 * 60 * 60 * 24 * 365.25));
+            var months = Math.floor((timeDiff % (1000 * 60 * 60 * 24 * 365.25)) / (1000 * 60 * 60 * 24 * 30.44));
+            var days = Math.floor((timeDiff % (1000 * 60 * 60 * 24 * 30.44)) / (1000 * 60 * 60 * 24));
+            var totalDays = Math.floor(timeDiff / (1000 * 60 * 60 * 24));
+            document.getElementById("dateComparison").innerText = `Between the two dates:\n${years} years, ${months} months, and ${days} days.\n${totalDays} days in total.`;
+        }
+
+        function displayDateFormat() {
+            var selectedDate = new Date(document.getElementById("dateInputConversion").value);
+            var selectedFormat = document.getElementById("dateFormat").value;
+            var formattedDate = formatDate(selectedDate, selectedFormat);
+            document.getElementById("displayDateFormat").innerText = formattedDate;
+        }
+
+        function formatDate(date, format) {
+            var day = String(date.getDate()).padStart(2, '0');
+            var month = String(date.getMonth() + 1).padStart(2, '0');
+            var year = date.getFullYear().toString();
+            var shortYear = year.slice(-2);
+            var monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+            var monthName = monthNames[date.getMonth()];
+
+            switch (format) {
+                case "DD/MM/YYYY":
+                    return `${day}/${month}/${year}`;
+                case "DD-MM-YYYY":
+                    return `${day}-${month}-${year}`;
+                case "DD-MMM-YYYY":
+                    return `${day}-${monthName}-${year}`;
+                case "DD/MMM/YYYY":
+                    return `${day}/${monthName}/${year}`;
+                case "DD-MM-YY":
+                    return `${day}-${month}-${shortYear}`;
+                case "DD/MM/YY":
+                    return `${day}/${month}/${shortYear}`;
+                case "MM/DD/YYYY":
+                    return `${month}/${day}/${year}`;
+                case "MM-DD-YYYY":
+                    return `${month}-${day}-${year}`;
+                case "MMM-DD-YYYY":
+                    return `${monthName}-${day}-${year}`;
+                case "MMM/DD/YYYY":
+                    return `${monthName}/${day}/${year}`;
+                case "MM-DD-YY":
+                    return `${month}-${day}-${shortYear}`;
+                case "MM/DD/YY":
+                    return `${month}/${day}/${shortYear}`;
+                default:
+                    return "Invalid format";
+            }
+        }
+    </script>
+</body>
+
+</html>
